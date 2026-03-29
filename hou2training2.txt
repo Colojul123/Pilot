@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HOU2 Training System (LIVE)</title>
+<style>
+body{font-family:Arial;background:#0b1020;color:white;margin:0;padding:20px}
+.card{background:#111827;padding:20px;border-radius:12px;margin-bottom:20px}
+button{padding:10px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer}
+input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617;color:white}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>Login</h2>
+<input id="loginId" placeholder="Enter Login ID" />
+<button onclick="start()">Start Test</button>
+</div>
+
+<div class="card" id="exam" style="display:none">
+<h3 id="question"></h3>
+<div id="options"></div>
+</div>
+
+<div class="card" id="admin">
+<h2>LIVE RESULTS</h2>
+<div id="results"></div>
+</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "PASTE_HERE",
+  authDomain: "PASTE_HERE",
+  projectId: "PASTE_HERE"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let questions = [
+{q:"What is CPT?",o:["Wrong","Critical Pull Time","Wrong"],a:1},
+{q:"What is VPM?",o:["Wrong","Mismatch system vs physical","Wrong"],a:1}
+];
+
+let index=0,score=0,user="";
+
+function start(){
+  user=document.getElementById("loginId").value;
+  if(!user){alert("Enter ID");return;}
+  document.getElementById("exam").style.display="block";
+  nextQ();
+}
+
+function nextQ(){
+  if(index>=questions.length){finish();return;}
+  let q=questions[index];
+  document.getElementById("question").innerText=q.q;
+  document.getElementById("options").innerHTML=q.o.map((opt,i)=>
+    `<div onclick="answer(${i})">${opt}</div>`
+  ).join("");
+}
+
+function answer(i){
+  if(i===questions[index].a) score++;
+  index++;
+  nextQ();
+}
+
+function finish(){
+  let percent=Math.round((score/questions.length)*100);
+
+  let result={
+    loginId:user,
+    percent:percent,
+    completedAt:new Date().toISOString()
+  };
+
+  db.collection("hou2_results").add(result);
+
+  alert("Submitted: "+percent+"%");
+}
+
+db.collection("hou2_results")
+.orderBy("completedAt","desc")
+.onSnapshot(snap=>{
+  let html="";
+  snap.forEach(doc=>{
+    let r=doc.data();
+    html+=`<div>${r.loginId} - ${r.percent}%</div>`;
+  });
+  document.getElementById("results").innerHTML=html;
+});
+</script>
+
+</body>
+</html>
