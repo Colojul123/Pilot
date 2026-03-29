@@ -2,30 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>HOU2 Training LIVE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOU2 Training PRO</title>
+
 <style>
-body{font-family:Arial;background:#0b1020;color:white;padding:20px}
-.card{background:#111827;padding:20px;border-radius:12px;margin-bottom:20px}
-button{padding:10px;background:#2563eb;color:white;border:none;border-radius:8px}
+body{margin:0;font-family:Arial;background:#0b1020;color:white}
+.hidden{display:none!important}
+.card{background:#111827;padding:20px;border-radius:12px;margin:15px}
+button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer}
 input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617;color:white}
+.option{padding:10px;margin:6px 0;background:#1e293b;border-radius:8px;cursor:pointer}
+
+/* INTRO */
+#introScreen{
+ position:fixed;inset:0;display:flex;justify-content:center;align-items:center;
+ background:radial-gradient(circle,#12275b,#020617);z-index:9999
+}
+.intro-title{
+ font-size:60px;font-weight:900;
+ background:linear-gradient(90deg,#60a5fa,#22c55e,#f59e0b);
+ -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* LOADING */
+#loadingScreen{
+ position:fixed;inset:0;display:flex;justify-content:center;align-items:center;
+ background:#020617;z-index:9998
+}
+.loader{
+ width:60px;height:60px;border:5px solid #334155;border-top:5px solid #22c55e;
+ border-radius:50%;animation:spin 1s linear infinite
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
+
 <body>
+
+<div id="introScreen">
+ <div class="card" style="text-align:center">
+  <h1 class="intro-title">HOU2 REFRESHER</h1>
+  <button id="enterBtn">ENTER</button>
+ </div>
+</div>
+
+<div id="loadingScreen" class="hidden">
+ <div class="loader"></div>
+</div>
+
+<div id="appRoot" class="hidden">
 
 <div class="card">
 <h2>Login</h2>
-<input id="loginId" placeholder="Enter Login ID">
-<button onclick="start()">Start</button>
+<input id="user" placeholder="Enter Login ID">
+<button onclick="start()">Start Test</button>
 </div>
 
 <div class="card" id="exam" style="display:none">
-<h3 id="question"></h3>
-<div id="options"></div>
+<h3 id="q"></h3>
+<div id="opts"></div>
 </div>
 
 <div class="card">
-<h2>LIVE RESULTS</h2>
+<h2>LIVE DASHBOARD</h2>
 <div id="results"></div>
+</div>
+
 </div>
 
 <!-- FIREBASE -->
@@ -33,25 +75,80 @@ input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "PASTE_HERE",
-  authDomain: "PASTE_HERE",
-  projectId: "PASTE_HERE"
+const firebaseConfig={
+ apiKey:"PASTE_HERE",
+ authDomain:"PASTE_HERE",
+ projectId:"PASTE_HERE"
 };
-
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const db=firebase.firestore();
 
-let questions=[
-{q:"What is CPT?",o:["Wrong","Critical Pull Time","Wrong"],a:1},
-{q:"What is VPM?",o:["Wrong","Mismatch system vs physical","Wrong"],a:1}
+// AA LIST
+const allowedAA=[
+'BOTUSA','CLOUIVOR','COLOJUL','DANAGAME','ESTEFFVR','GERMRODX',
+'GIPSOMAR','GOCCONNI','GONZSMON','HOQSAMIN','HUGHEAHM','IMARYAJO',
+'JESUALAN','KARRHEND','LARJOSEL','LEDEZJUA','LEMICHW','LESLSGAR',
+'LEWQUANT','LTONYVU','MAGUZMAX','MENBRISA','MERILESV','RAMOSVGE',
+'ZAPATKAT','ZCERDAAN','DAVELLDI'
 ];
 
-let i=0,score=0,user="";
+// 44 QUESTIONS (short format)
+let baseQuestions=[
+{q:"SDT?",o:["A","B","Scheduled Departure Time"],a:2},
+{q:"CPT?",o:["A","Critical Pull Time","C"],a:1},
+{q:"FPY?",o:["A","B","Correct first time"],a:2},
+{q:"DEA?",o:["A","Dock Efficiency","C"],a:1},
+{q:"RLST?",o:["A","Ready Load Scan","C"],a:1},
+{q:"Rolled Freight?",o:["A","Missed","C"],a:1},
+{q:"VPM?",o:["A","Mismatch","C"],a:1},
+{q:"TDR?",o:["A","Trailer Close","C"],a:1},
+{q:"Sweep?",o:["A","B","Recover"],a:2},
+{q:"Fluid?",o:["A","Continuous","C"],a:1},
+{q:"Staging?",o:["A","Waiting","C"],a:1},
+{q:"Util?",o:["A","Full","C"],a:1},
+{q:"Missort?",o:["A","Wrong","C"],a:1},
+{q:"ReSLAM?",o:["A","Relabel","C"],a:1},
+{q:"Late?",o:["A","B","After SDT"],a:2},
+{q:"YMS?",o:["A","Management","C"],a:1},
+{q:"SSP?",o:["A","Platform","C"],a:1},
+{q:"Fill?",o:["A","%","C"],a:1},
+{q:"Fail Move?",o:["A","Wrong","C"],a:1},
+{q:"Adhoc?",o:["A","Unplanned","C"],a:1},
+{q:"Volume?",o:["A","Future","C"],a:1},
+{q:"HC?",o:["A","People","C"],a:1},
+{q:"Door?",o:["A","Door","C"],a:1},
+{q:"Delay?",o:["A","Driver","C"],a:1},
+{q:"Risk?",o:["A","Over","C"],a:1},
+{q:"Utilized?",o:["A","Used","C"],a:1},
+{q:"Progress?",o:["A","Paused","C"],a:1},
+{q:"Cancel?",o:["A","Cancelled","C"],a:1},
+{q:"Not found?",o:["A","Missing","C"],a:1},
+{q:"Swap?",o:["A","Wrong","C"],a:1},
+{q:"Fluid progress?",o:["A","Fluid","C"],a:1},
+{q:"Fluid loaded?",o:["A","Exception","C"],a:1},
+{q:"No attach?",o:["A","No TDR","C"],a:1},
+{q:"Trailer not found?",o:["A","Mismatch","C"],a:1},
+{q:"Fit?",o:["A","Full","C"],a:1},
+{q:"Shift?",o:["A","Abandon","C"],a:1},
+{q:"Inactive?",o:["A","Idle","C"],a:1},
+{q:"Invalid?",o:["A","Stage","C"],a:1},
+{q:"Missed?",o:["A","Rolled","C"],a:1},
+{q:"Label?",o:["A","B","Reslam"],a:2},
+{q:"Wrong?",o:["Missort","B","C"],a:0},
+{q:"Mismatch?",o:["A","VPM","C"],a:1},
+{q:"Scan late?",o:["A","B","Late"],a:2},
+{q:"Cart?",o:["A","36","C"],a:1}
+];
+
+function shuffle(a){return a.sort(()=>Math.random()-0.5)}
+
+let questions=[],i=0,score=0,user="";
 
 function start(){
- user=document.getElementById("loginId").value;
- if(!user){alert("Enter ID");return;}
+ user=document.getElementById("user").value.trim().toUpperCase();
+ if(!allowedAA.includes(user)){alert("ACCESS DENIED");return;}
+ questions=shuffle([...baseQuestions]);
+ i=0;score=0;
  document.getElementById("exam").style.display="block";
  next();
 }
@@ -59,42 +156,39 @@ function start(){
 function next(){
  if(i>=questions.length){finish();return;}
  let q=questions[i];
- document.getElementById("question").innerText=q.q;
- document.getElementById("options").innerHTML=q.o.map((o,idx)=>
- `<div onclick="ans(${idx})">${o}</div>`
+ document.getElementById("q").innerText=q.q;
+ document.getElementById("opts").innerHTML=q.o.map((o,idx)=>
+ `<div class="option" onclick="ans(${idx})">${o}</div>`
  ).join("");
 }
 
 function ans(idx){
- if(idx===questions[i].a) score++;
- i++;
- next();
+ if(idx===questions[i].a)score++;
+ i++;next();
 }
 
 function finish(){
  let percent=Math.round((score/questions.length)*100);
-
- let result={
-  loginId:user,
-  percent:percent,
-  completedAt:new Date().toISOString()
- };
-
- db.collection("hou2_results").add(result);
-
+ db.collection("hou2_results").add({loginId:user,percent,completedAt:new Date().toISOString()});
  alert("Submitted "+percent+"%");
 }
 
-db.collection("hou2_results")
-.orderBy("completedAt","desc")
-.onSnapshot(snap=>{
- let html="";
- snap.forEach(doc=>{
-  let r=doc.data();
-  html+=`<div>${r.loginId} - ${r.percent}%</div>`;
- });
- document.getElementById("results").innerHTML=html;
+// DASHBOARD
+db.collection("hou2_results").orderBy("completedAt","desc")
+.onSnapshot(s=>{
+ let h="";s.forEach(d=>{let r=d.data();h+=`<div>${r.loginId} - ${r.percent}%</div>`});
+ document.getElementById("results").innerHTML=h;
 });
+
+// INTRO FLOW
+document.getElementById("enterBtn").onclick=()=>{
+ document.getElementById("introScreen").style.display="none";
+ document.getElementById("loadingScreen").classList.remove("hidden");
+ setTimeout(()=>{
+  document.getElementById("loadingScreen").classList.add("hidden");
+  document.getElementById("appRoot").classList.remove("hidden");
+ },1200);
+};
 </script>
 
 </body>
