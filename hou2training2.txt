@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HOU2 Training System (LIVE)</title>
+<meta charset="UTF-8">
+<title>HOU2 Training LIVE</title>
 <style>
-body{font-family:Arial;background:#0b1020;color:white;margin:0;padding:20px}
+body{font-family:Arial;background:#0b1020;color:white;padding:20px}
 .card{background:#111827;padding:20px;border-radius:12px;margin-bottom:20px}
-button{padding:10px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer}
+button{padding:10px;background:#2563eb;color:white;border:none;border-radius:8px}
 input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617;color:white}
 </style>
 </head>
@@ -15,8 +14,8 @@ input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617
 
 <div class="card">
 <h2>Login</h2>
-<input id="loginId" placeholder="Enter Login ID" />
-<button onclick="start()">Start Test</button>
+<input id="loginId" placeholder="Enter Login ID">
+<button onclick="start()">Start</button>
 </div>
 
 <div class="card" id="exam" style="display:none">
@@ -24,7 +23,7 @@ input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617
 <div id="options"></div>
 </div>
 
-<div class="card" id="admin">
+<div class="card">
 <h2>LIVE RESULTS</h2>
 <div id="results"></div>
 </div>
@@ -43,58 +42,58 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let questions = [
+let questions=[
 {q:"What is CPT?",o:["Wrong","Critical Pull Time","Wrong"],a:1},
 {q:"What is VPM?",o:["Wrong","Mismatch system vs physical","Wrong"],a:1}
 ];
 
-let index=0,score=0,user="";
+let i=0,score=0,user="";
 
 function start(){
-  user=document.getElementById("loginId").value;
-  if(!user){alert("Enter ID");return;}
-  document.getElementById("exam").style.display="block";
-  nextQ();
+ user=document.getElementById("loginId").value;
+ if(!user){alert("Enter ID");return;}
+ document.getElementById("exam").style.display="block";
+ next();
 }
 
-function nextQ(){
-  if(index>=questions.length){finish();return;}
-  let q=questions[index];
-  document.getElementById("question").innerText=q.q;
-  document.getElementById("options").innerHTML=q.o.map((opt,i)=>
-    `<div onclick="answer(${i})">${opt}</div>`
-  ).join("");
+function next(){
+ if(i>=questions.length){finish();return;}
+ let q=questions[i];
+ document.getElementById("question").innerText=q.q;
+ document.getElementById("options").innerHTML=q.o.map((o,idx)=>
+ `<div onclick="ans(${idx})">${o}</div>`
+ ).join("");
 }
 
-function answer(i){
-  if(i===questions[index].a) score++;
-  index++;
-  nextQ();
+function ans(idx){
+ if(idx===questions[i].a) score++;
+ i++;
+ next();
 }
 
 function finish(){
-  let percent=Math.round((score/questions.length)*100);
+ let percent=Math.round((score/questions.length)*100);
 
-  let result={
-    loginId:user,
-    percent:percent,
-    completedAt:new Date().toISOString()
-  };
+ let result={
+  loginId:user,
+  percent:percent,
+  completedAt:new Date().toISOString()
+ };
 
-  db.collection("hou2_results").add(result);
+ db.collection("hou2_results").add(result);
 
-  alert("Submitted: "+percent+"%");
+ alert("Submitted "+percent+"%");
 }
 
 db.collection("hou2_results")
 .orderBy("completedAt","desc")
 .onSnapshot(snap=>{
-  let html="";
-  snap.forEach(doc=>{
-    let r=doc.data();
-    html+=`<div>${r.loginId} - ${r.percent}%</div>`;
-  });
-  document.getElementById("results").innerHTML=html;
+ let html="";
+ snap.forEach(doc=>{
+  let r=doc.data();
+  html+=`<div>${r.loginId} - ${r.percent}%</div>`;
+ });
+ document.getElementById("results").innerHTML=html;
 });
 </script>
 
