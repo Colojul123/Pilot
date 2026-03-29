@@ -83,7 +83,6 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 
-// AA LIST
 const allowedAA=[
 'BOTUSA','CLOUIVOR','COLOJUL','DANAGAME','ESTEFFVR','GERMRODX',
 'GIPSOMAR','GOCCONNI','GONZSMON','HOQSAMIN','HUGHEAHM','IMARYAJO',
@@ -92,7 +91,6 @@ const allowedAA=[
 'ZAPATKAT','ZCERDAAN','DAVELLDI'
 ];
 
-// 44 QUESTIONS (short format)
 let baseQuestions=[
 {q:"SDT?",o:["A","B","Scheduled Departure Time"],a:2},
 {q:"CPT?",o:["A","Critical Pull Time","C"],a:1},
@@ -173,14 +171,12 @@ function finish(){
  alert("Submitted "+percent+"%");
 }
 
-// DASHBOARD
 db.collection("hou2_results").orderBy("completedAt","desc")
 .onSnapshot(s=>{
  let h="";s.forEach(d=>{let r=d.data();h+=`<div>${r.loginId} - ${r.percent}%</div>`});
  document.getElementById("results").innerHTML=h;
 });
 
-// INTRO FLOW
 document.getElementById("enterBtn").onclick=()=>{
  document.getElementById("introScreen").style.display="none";
  document.getElementById("loadingScreen").classList.remove("hidden");
