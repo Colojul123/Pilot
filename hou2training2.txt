@@ -1,154 +1,1016 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HOU2 Training PRO</title>
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HOU2 PRO v4.1 Full System</title>
 <style>
-body{margin:0;font-family:Arial;background:#0b1020;color:white}
-.hidden{display:none!important}
-.card{background:#111827;padding:20px;border-radius:12px;margin:15px}
-button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:white;cursor:pointer}
-input{padding:10px;border-radius:8px;border:1px solid #334155;background:#020617;color:white}
-.option{padding:10px;margin:6px 0;background:#1e293b;border-radius:8px;cursor:pointer}
-
-#introScreen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:radial-gradient(circle,#12275b,#020617);z-index:9999}
-.intro-title{font-size:60px;font-weight:900;background:linear-gradient(90deg,#60a5fa,#22c55e,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-
-#loadingScreen{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:#020617;z-index:9998}
-.loader{width:60px;height:60px;border:5px solid #334155;border-top:5px solid #22c55e;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+  :root{
+    --bg:#0b1020;
+    --bg2:#111827;
+    --panel:#0f172a;
+    --panel2:#111827;
+    --line:#334155;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --blue:#2563eb;
+    --green:#22c55e;
+    --yellow:#f59e0b;
+    --red:#ef4444;
+    --purple:#8b5cf6;
+    --cyan:#06b6d4;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+      radial-gradient(circle at top right, rgba(37,99,235,.22), transparent 28%),
+      radial-gradient(circle at top left, rgba(139,92,246,.18), transparent 26%),
+      linear-gradient(180deg, var(--bg), #0f172a 45%, var(--bg2));
+    color:var(--text);
+    min-height:100vh;
+  }
+  .hidden{display:none !important}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px}
+  .header{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .brand{
+    font-size:28px;font-weight:800;letter-spacing:.6px;
+  }
+  .sub{
+    color:var(--muted);font-size:13px;margin-top:4px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:16px;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr}
+  }
+  .card{
+    background:rgba(17,24,39,.88);
+    border:1px solid rgba(148,163,184,.16);
+    padding:18px;
+    border-radius:16px;
+    box-shadow:0 12px 30px rgba(0,0,0,.24);
+  }
+  .section-title{
+    margin:0 0 12px;
+    font-size:18px;
+    font-weight:800;
+    letter-spacing:.3px;
+  }
+  .muted{color:var(--muted)}
+  input, select, textarea{
+    width:100%;
+    background:#0b1220;
+    color:var(--text);
+    border:1px solid #334155;
+    border-radius:10px;
+    padding:11px 12px;
+    outline:none;
+  }
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(37,99,235,.16);
+  }
+  textarea{min-height:96px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width: 640px){
+    .row{grid-template-columns:1fr}
+  }
+  button{
+    border:none;
+    border-radius:12px;
+    padding:11px 14px;
+    font-weight:700;
+    cursor:pointer;
+    color:white;
+    transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+  }
+  button:hover{transform:translateY(-1px)}
+  button:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .btn-blue{background:linear-gradient(135deg,var(--blue),#1d4ed8)}
+  .btn-green{background:linear-gradient(135deg,var(--green),#16a34a)}
+  .btn-yellow{background:linear-gradient(135deg,var(--yellow),#d97706)}
+  .btn-red{background:linear-gradient(135deg,var(--red),#dc2626)}
+  .btn-purple{background:linear-gradient(135deg,var(--purple),#7c3aed)}
+  .btn-ghost{
+    background:transparent;
+    border:1px solid #334155;
+  }
+  .stack{display:flex;flex-direction:column;gap:10px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#0b1220;border:1px solid #334155;color:var(--text);
+    border-radius:999px;padding:8px 12px;font-size:13px;
+  }
+  .hero{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:16px;
+  }
+  @media (max-width: 900px){ .hero{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width: 540px){ .hero{grid-template-columns:1fr} }
+  .stat{
+    background:rgba(15,23,42,.88);
+    border:1px solid rgba(148,163,184,.15);
+    border-radius:16px;
+    padding:14px;
+  }
+  .stat .label{color:var(--muted);font-size:12px}
+  .stat .value{font-size:28px;font-weight:800;margin-top:5px}
+  .timerbar{
+    width:100%;
+    height:12px;
+    background:#0b1220;
+    border-radius:999px;
+    overflow:hidden;
+    border:1px solid #334155;
+  }
+  .timerfill{
+    height:100%;
+    width:100%;
+    background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));
+    transition:width 1s linear;
+  }
+  .question-meta{
+    display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    margin-bottom:12px;
+    color:var(--muted);
+    font-size:13px;
+  }
+  .question-box{
+    margin-top:12px;
+    margin-bottom:16px;
+    padding:16px;
+    border-radius:14px;
+    background:#0b1220;
+    border:1px solid #334155;
+  }
+  .question-text{
+    font-size:22px;
+    font-weight:800;
+    line-height:1.35;
+    margin:0;
+  }
+  .options{
+    display:grid;
+    gap:12px;
+    margin-top:12px;
+  }
+  .option-btn{
+    text-align:left;
+    width:100%;
+    padding:14px 16px;
+    background:linear-gradient(180deg,#172033,#0f172a);
+    border:1px solid #334155;
+    border-radius:14px;
+  }
+  .option-btn:hover{
+    border-color:#64748b;
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+  }
+  .answer-tag{
+    display:inline-block;
+    min-width:28px;
+    margin-right:10px;
+    color:#cbd5e1;
+  }
+  .score-card{
+    text-align:center;
+    padding:24px;
+  }
+  .score-ring{
+    width:130px;height:130px;border-radius:50%;
+    margin:0 auto 14px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:30px;
+    border:8px solid #1f2937;
+    background:#0b1220;
+  }
+  .pass{border-color:var(--green);box-shadow:0 0 0 8px rgba(34,197,94,.09)}
+  .warn{border-color:var(--yellow);box-shadow:0 0 0 8px rgba(245,158,11,.09)}
+  .fail{border-color:var(--red);box-shadow:0 0 0 8px rgba(239,68,68,.09)}
+  .result-banner{
+    margin:12px auto 18px;
+    display:inline-block;
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:800;
+  }
+  .result-pass{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.35)}
+  .result-warn{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.35)}
+  .result-fail{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.35)}
+  .leaderboard-row, .question-row{
+    display:grid;
+    grid-template-columns:1.4fr .8fr .9fr .8fr auto;
+    gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    border-bottom:1px solid rgba(148,163,184,.12);
+  }
+  .leaderboard-row.header-row, .question-row.header-row{
+    font-weight:800;
+    color:#cbd5e1;
+    background:#101827;
+    border-radius:10px;
+    border-bottom:none;
+    margin-bottom:8px;
+  }
+  @media (max-width: 860px){
+    .leaderboard-row, .question-row{
+      grid-template-columns:1fr;
+      gap:6px;
+    }
+  }
+  .badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+  }
+  .badge-green{background:rgba(34,197,94,.14);color:#86efac}
+  .badge-yellow{background:rgba(245,158,11,.14);color:#fcd34d}
+  .badge-red{background:rgba(239,68,68,.14);color:#fca5a5}
+  .small{font-size:12px}
+  .footnote{margin-top:8px;color:var(--muted);font-size:12px}
+  .danger-text{color:#fca5a5}
+  iframe.hidden-frame{width:0;height:0;border:0;position:absolute;left:-9999px}
 </style>
 </head>
-
 <body>
+<div class="wrap">
+  <div class="header">
+    <div>
+      <div class="brand">HOU2 PRO v4.1</div>
+      <div class="sub">Refresher | Randomized quiz | Leaderboard | Admin tools | Anti-cheat</div>
+    </div>
+    <div class="actions">
+      <span class="pill">⏱ 15 sec / question</span>
+      <span class="pill">🏆 Live leaderboard</span>
+      <span class="pill">📧 Email result</span>
+      <span class="pill">💬 Slack webhook ready</span>
+    </div>
+  </div>
 
-<div id="introScreen">
- <div class="card" style="text-align:center">
-  <h1 class="intro-title">HOU2 REFRESHER</h1>
-  <button id="enterBtn">ENTER</button>
- </div>
+  <div class="hero">
+    <div class="stat">
+      <div class="label">Question Bank</div>
+      <div class="value" id="statQuestions">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Leaderboard Entries</div>
+      <div class="value" id="statResults">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Pass Mark</div>
+      <div class="value">80%</div>
+    </div>
+    <div class="stat">
+      <div class="label">Anti-Cheat</div>
+      <div class="value">ON</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="stack">
+      <div class="card" id="loginCard">
+        <h2 class="section-title">Associate Login</h2>
+        <div class="row">
+          <div>
+            <label class="small muted">Login ID / Name</label>
+            <input id="name" placeholder="Enter login ID or name" maxlength="60" />
+          </div>
+          <div>
+            <label class="small muted">Department</label>
+            <select id="dept">
+              <option value="DEA">DEA</option>
+              <option value="Ship Dock">Ship Dock</option>
+              <option value="Yard">Yard</option>
+              <option value="Training">Training</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:14px">
+          <button class="btn-blue" id="startBtn">Start Test</button>
+          <button class="btn-ghost" id="previewAdminBtn">Open Admin</button>
+        </div>
+        <div class="footnote">
+          Quiz shuffles both question order and answer order every attempt.
+        </div>
+      </div>
+
+      <div class="card hidden" id="quizCard">
+        <div class="question-meta">
+          <div>Question <span id="qNumber">1</span> / <span id="qTotal">1</span></div>
+          <div>Category: <span id="qCategory">General</span></div>
+          <div>Answered: <span id="answeredCount">0</span></div>
+        </div>
+        <div class="timerbar"><div class="timerfill" id="timerFill"></div></div>
+        <div style="margin-top:10px">⏱ Time left: <strong id="timer">15</strong>s</div>
+        <div class="question-box">
+          <h3 class="question-text" id="qText"></h3>
+        </div>
+        <div class="options" id="options"></div>
+        <div class="footnote danger-text" id="cheatNote">
+          Leaving the tab during an active test ends the attempt.
+        </div>
+      </div>
+
+      <div class="card hidden score-card" id="resultCard">
+        <div id="scoreRing" class="score-ring pass">0%</div>
+        <div id="resultBanner" class="result-banner result-pass">PASS</div>
+        <h2 id="scoreText" style="margin:0 0 10px"></h2>
+        <div id="resultBreakdown" class="muted" style="line-height:1.7"></div>
+        <div class="actions" style="justify-content:center;margin-top:18px">
+          <button class="btn-blue" id="retryBtn">Retake Test</button>
+          <button class="btn-ghost" id="showAdminBtn">View Admin Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card hidden" id="adminLoginCard">
+        <h2 class="section-title">Admin Access</h2>
+        <label class="small muted">Admin Passcode</label>
+        <input id="adminPass" type="password" placeholder="Enter admin passcode" />
+        <div class="actions" style="margin-top:14px">
+          <button class="btn-purple" id="adminUnlockBtn">Unlock Admin</button>
+          <button class="btn-ghost" id="adminCloseBtn">Close</button>
+        </div>
+        <div class="footnote">Default passcode: <strong>HOU2ADMIN</strong> (change in code before production).</div>
+      </div>
+
+      <div class="card hidden" id="adminCard">
+        <div class="actions" style="justify-content:space-between;align-items:center">
+          <h2 class="section-title" style="margin:0">Admin Dashboard</h2>
+          <button class="btn-ghost" id="adminHideBtn">Hide Admin</button>
+        </div>
+
+        <div class="row">
+          <div class="card" style="margin:0;padding:14px">
+            <h3 class="section-title" style="font-size:16px">Add Question</h3>
+            <label class="small muted">Category</label>
+            <input id="newCat" placeholder="Example: Timing" />
+            <label class="small muted" style="margin-top:10px;display:block">Question</label>
+            <textarea id="newQuestion" placeholder="Type the new question here"></textarea>
+            <label class="small muted" style="margin-top:10px;display:block">Correct answer (Option 1)</label>
+            <input id="opt1" placeholder="Correct answer" />
+            <label class="small muted" style="margin-top:10px;display:block">Wrong answer (Option 2)</label>
+            <input id="opt2" placeholder="Wrong answer" />
+            <label class="small muted" style="margin-top:10px;display:block">Wrong answer (Option 3)</label>
+            <input id="opt3" placeholder="Wrong answer" />
+            <div class="actions" style="margin-top:12px">
+              <button class="btn-green" id="addQuestionBtn">Add Question</button>
+              <button class="btn-ghost" id="seedBtn">Reset Default Bank</button>
+            </div>
+          </div>
+
+          <div class="card" style="margin:0;padding:14px">
+            <h3 class="section-title" style="font-size:16px">Email / Slack Status</h3>
+            <div class="stack">
+              <div class="pill">Email target: <strong>colojul@amazon.com</strong></div>
+              <div class="pill">Slack webhook: <strong id="slackStatus">Not configured</strong></div>
+              <div class="pill">Data mode: <strong id="dataMode">Local fallback</strong></div>
+            </div>
+            <div class="footnote">
+              For Slack, paste your Incoming Webhook URL in <code>SLACK_WEBHOOK_URL</code> inside the script.
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin:16px 0 0;padding:14px">
+          <h3 class="section-title" style="font-size:16px">Leaderboard</h3>
+          <div class="leaderboard-row header-row">
+            <div>Name</div>
+            <div>Score</div>
+            <div>Status</div>
+            <div>Avg Time</div>
+            <div>Date</div>
+          </div>
+          <div id="leaderboard"></div>
+        </div>
+
+        <div class="card" style="margin:16px 0 0;padding:14px">
+          <h3 class="section-title" style="font-size:16px">Question Bank</h3>
+          <div class="question-row header-row">
+            <div>Question</div>
+            <div>Category</div>
+            <div>Correct</div>
+            <div>Options</div>
+            <div>Action</div>
+          </div>
+          <div id="questionList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div id="loadingScreen" class="hidden">
- <div class="loader"></div>
-</div>
+<!-- Hidden email form -->
+<iframe name="emailFrame" class="hidden-frame"></iframe>
+<form id="emailForm" action="https://formsubmit.co/colojul@amazon.com" method="POST" target="emailFrame" class="hidden">
+  <input type="hidden" name="_captcha" value="false" />
+  <input type="hidden" name="_template" value="table" />
+  <input type="hidden" name="_subject" value="HOU2 PRO v4.1 Test Result" />
+  <input type="hidden" name="associate_name" id="email_name" />
+  <input type="hidden" name="department" id="email_department" />
+  <input type="hidden" name="score" id="email_score" />
+  <input type="hidden" name="status" id="email_status" />
+  <input type="hidden" name="correct_answers" id="email_correct" />
+  <input type="hidden" name="total_questions" id="email_total" />
+  <input type="hidden" name="avg_seconds_per_question" id="email_avg" />
+  <input type="hidden" name="completed_at" id="email_time" />
+</form>
 
-<div id="appRoot" class="hidden">
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
+    onSnapshot, setDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<div class="card" id="loginCard">
-<h2>Login</h2>
-<input id="user" placeholder="Enter Login ID">
-<button onclick="start()">Start Test</button>
-</div>
+  // =========================
+  // CONFIG
+  // =========================
+  const ADMIN_PASSCODE = "HOU2ADMIN";
+  const PASS_SCORE = 80;
+  const WARN_SCORE = 70;
+  const QUESTION_TIME = 15;
+  const EMAIL_TARGET = "colojul@amazon.com";
+  const SLACK_WEBHOOK_URL = ""; // paste Slack Incoming Webhook URL here for live Slack alerts
 
-<div class="card" id="exam" style="display:none">
-<h3 id="q"></h3>
-<div id="opts"></div>
-</div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBb3Hp9fDJMzXXWCIQ_LZM1qg01Zq2b6xc",
+    authDomain: "test-1-56661.firebaseapp.com",
+    projectId: "test-1-56661"
+  };
 
-<div class="card">
-<h2>LIVE DASHBOARD</h2>
-<div id="results"></div>
-</div>
+  const defaultQuestions = [
+    {id:"Q1",cat:"Timing",q:"What does SDT stand for?",a:["Scheduled Dock Time","Shipment Delivery Target","Scheduled Departure Time"],c:2},
+    {id:"Q2",cat:"Timing",q:"What does CPT mean?",a:["Carrier Processing Time","Critical Pull Time","Container Processing Target"],c:1},
+    {id:"Q3",cat:"Quality",q:"What is FPY (First Pass Yield)?",a:["Speed of loading trailers","Number of drivers per shift","% of packages processed correctly the first time"],c:2},
+    {id:"Q4",cat:"Metrics",q:"What does DEA usually refer to in dock operations?",a:["Dock Efficiency Assessment","Driver Escort Authorization","Departure Exception Audit"],c:0},
+    {id:"Q5",cat:"Operations",q:"What is rolled freight?",a:["Freight moved to the next available load due to miss or capacity issue","Freight physically rolled by associates","Freight already delivered"],c:0},
+    {id:"Q6",cat:"Systems",q:"What does YMS stand for?",a:["Yield Monitoring System","Yard Management System","Yard Movement Standard"],c:1},
+    {id:"Q7",cat:"Operations",q:"If trailer capacity is exceeded, what is the most likely recovery action?",a:["Close the dock immediately","Request adhoc / recovery support","Delete the VR"],c:1},
+    {id:"Q8",cat:"Timing",q:"What is RLST commonly used for?",a:["Ready Load Scan Time","Route Lane Start Time","Regional Load Service Target"],c:0},
+    {id:"Q9",cat:"Quality",q:"A container is virtually on trailer but physically still staged. What is this?",a:["Normal dock flow","Potential virtual/physical mismatch","CPT closure"],c:1},
+    {id:"Q10",cat:"Safety",q:"What should happen first if equipment has a safety defect?",a:["Keep using until ROC replies","Stop use and escalate","Move it to the next door"],c:1}
+  ];
 
-</div>
+  // =========================
+  // STATE
+  // =========================
+  let db = null;
+  let firebaseReady = false;
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  let questionBank = [];
+  let resultsCache = [];
+  let quizQuestions = [];
+  let index = 0;
+  let score = 0;
+  let answeredCount = 0;
+  let time = QUESTION_TIME;
+  let interval = null;
+  let quizActive = false;
+  let questionStartMs = 0;
+  let timings = [];
+  let cheatTriggered = false;
 
-<script>
-let db=null;
+  // =========================
+  // HELPERS
+  // =========================
+  const $ = (id) => document.getElementById(id);
 
-const firebaseConfig = {
-  apiKey: "AIzaSyATaj7lRp6FwV9wzOu3blMH5oufzNdWpfc",
-  authDomain: "dea-test-46642.firebaseapp.com",
-  databaseURL: "https://dea-test-46642-default-rtdb.firebaseio.com",
-  projectId: "dea-test-46642",
-  storageBucket: "dea-test-46642.firebasestorage.app",
-  messagingSenderId: "133524555154",
-  appId: "1:133524555154:web:0a7ecde4b7e596eeb32d4b"
-};};
+  function shuffle(arr){
+    const a = [...arr];
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
 
-try{
- if(firebaseConfig.apiKey !== "PASTE_HERE"){
-   firebase.initializeApp(firebaseConfig);
-   db=firebase.firestore();
- }
-}catch(e){console.error(e);}
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, (m) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
+  }
 
-const allowedAA=[
-'BOTUSA','CLOUIVOR','COLOJUL','DANAGAME','ESTEFFVR','GERMRODX',
-'GIPSOMAR','GOCCONNI','GONZSMON','HOQSAMIN','HUGHEAHM','IMARYAJO',
-'JESUALAN','KARRHEND','LARJOSEL','LEDEZJUA','LEMICHW','LESLSGAR',
-'LEWQUANT','LTONYVU','MAGUZMAX','MENBRISA','MERILESV','RAMOSVGE',
-'ZAPATKAT','ZCERDAAN','DAVELLDI'
-];
+  function getLocalQuestions(){
+    const raw = localStorage.getItem("hou2_questions_v41");
+    if(!raw) return [...defaultQuestions];
+    try{
+      const data = JSON.parse(raw);
+      return Array.isArray(data) && data.length ? data : [...defaultQuestions];
+    }catch{
+      return [...defaultQuestions];
+    }
+  }
 
-let baseQuestions=[
-{q:"SDT?",o:["A","B","Scheduled Departure Time"],a:2},
-{q:"CPT?",o:["A","Critical Pull Time","C"],a:1}
-];
+  function saveLocalQuestions(data){
+    localStorage.setItem("hou2_questions_v41", JSON.stringify(data));
+  }
 
-function shuffle(a){return a.sort(()=>Math.random()-0.5)}
+  function getLocalResults(){
+    const raw = localStorage.getItem("hou2_results_v41");
+    if(!raw) return [];
+    try{
+      const data = JSON.parse(raw);
+      return Array.isArray(data) ? data : [];
+    }catch{
+      return [];
+    }
+  }
 
-let questions=[],i=0,score=0,user="";
+  function saveLocalResult(result){
+    const results = getLocalResults();
+    results.unshift(result);
+    localStorage.setItem("hou2_results_v41", JSON.stringify(results.slice(0,200)));
+  }
 
-function start(){
- user=document.getElementById("user").value.trim().toUpperCase();
- if(!user){alert("Enter Login ID");return;}
- if(!allowedAA.includes(user)){alert("ACCESS DENIED");return;}
- questions=shuffle([...baseQuestions]);
- i=0;score=0;
- document.getElementById("loginCard").style.display="none";
- document.getElementById("exam").style.display="block";
- next();
-}
+  function setStats(){
+    $("statQuestions").textContent = questionBank.length;
+    $("statResults").textContent = resultsCache.length;
+  }
 
-function next(){
- if(i>=questions.length){finish();return;}
- let q=questions[i];
- document.getElementById("q").innerText=q.q;
- document.getElementById("opts").innerHTML=q.o.map((o,idx)=>
- `<div class="option" onclick="ans(${idx})">${o}</div>`
- ).join("");
-}
+  function getResultClass(percent){
+    if(percent >= PASS_SCORE) return {ring:"pass", banner:"result-pass", text:"PASS", badge:"badge-green"};
+    if(percent >= WARN_SCORE) return {ring:"warn", banner:"result-warn", text:"REVIEW", badge:"badge-yellow"};
+    return {ring:"fail", banner:"result-fail", text:"FAIL", badge:"badge-red"};
+  }
 
-function ans(idx){
- if(idx===questions[i].a)score++;
- i++;next();
-}
+  function setDataModeLabel(){
+    $("dataMode").textContent = firebaseReady ? "Firestore live" : "Local fallback";
+    $("slackStatus").textContent = SLACK_WEBHOOK_URL ? "Configured" : "Not configured";
+  }
 
-function finish(){
- let percent=Math.round((score/questions.length)*100);
- if(db){
-   db.collection("hou2_results").add({loginId:user,percent,completedAt:new Date().toISOString()});
- }
- alert("Submitted "+percent+"%");
-}
+  function nowIso(){
+    return new Date().toISOString();
+  }
 
-if(db){
- db.collection("hou2_results").orderBy("completedAt","desc")
- .onSnapshot(s=>{
-   let h="";
-   s.forEach(d=>{
-     let r=d.data();
-     h+=`<div>${r.loginId} - ${r.percent}%</div>`;
-   });
-   document.getElementById("results").innerHTML=h;
- });
-}
+  function formatDate(s){
+    if(!s) return "-";
+    const d = new Date(s);
+    return isNaN(d) ? s : d.toLocaleString();
+  }
 
-document.getElementById("enterBtn").onclick=()=>{
- document.getElementById("introScreen").style.display="none";
- document.getElementById("loadingScreen").classList.remove("hidden");
- setTimeout(()=>{
-   document.getElementById("loadingScreen").classList.add("hidden");
-   document.getElementById("appRoot").classList.remove("hidden");
- },1200);
-};
+  // =========================
+  // FIREBASE INIT
+  // =========================
+  async function initFirebase(){
+    try{
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      firebaseReady = true;
+      setDataModeLabel();
+
+      onSnapshot(collection(db, "results"), (snap) => {
+        const list = [];
+        snap.forEach((item) => list.push({ id: item.id, ...item.data() }));
+        list.sort((a,b) => (b.score || 0) - (a.score || 0) || new Date(b.time||0) - new Date(a.time||0));
+        resultsCache = list;
+        renderLeaderboard();
+        setStats();
+      });
+
+      onSnapshot(collection(db, "questions"), (snap) => {
+        const list = [];
+        snap.forEach((item) => list.push({ id: item.id, ...item.data() }));
+        if(list.length){
+          questionBank = list.map(normalizeQuestion).filter(Boolean);
+          saveLocalQuestions(questionBank);
+        }else{
+          questionBank = getLocalQuestions();
+        }
+        renderQuestionList();
+        setStats();
+      });
+    }catch(err){
+      console.warn("Firebase fallback mode:", err);
+      firebaseReady = false;
+      questionBank = getLocalQuestions();
+      resultsCache = getLocalResults();
+      renderQuestionList();
+      renderLeaderboard();
+      setStats();
+      setDataModeLabel();
+    }
+  }
+
+  function normalizeQuestion(item){
+    if(!item || !item.q || !Array.isArray(item.a) || item.a.length < 3) return null;
+    return {
+      id: item.id || ("Q" + crypto.randomUUID().slice(0,8)),
+      cat: item.cat || "General",
+      q: item.q,
+      a: item.a.slice(0,3),
+      c: Number.isInteger(item.c) ? item.c : 0
+    };
+  }
+
+  // =========================
+  // QUIZ
+  // =========================
+  function buildQuizQuestions(){
+    const normalized = questionBank.map(normalizeQuestion).filter(Boolean);
+    const randomized = shuffle(normalized).map((q) => {
+      const decorated = q.a.map((text, idx) => ({ text, originalIndex: idx }));
+      const randomizedOptions = shuffle(decorated);
+      const correctIndex = randomizedOptions.findIndex(x => x.originalIndex === q.c);
+      return {
+        id:q.id,
+        cat:q.cat,
+        q:q.q,
+        a: randomizedOptions.map(x => x.text),
+        c: correctIndex
+      };
+    });
+    return randomized;
+  }
+
+  function resetQuizState(){
+    clearInterval(interval);
+    index = 0;
+    score = 0;
+    answeredCount = 0;
+    time = QUESTION_TIME;
+    timings = [];
+    cheatTriggered = false;
+    quizActive = false;
+    quizQuestions = [];
+  }
+
+  function startQuiz(){
+    const user = $("name").value.trim();
+    if(!user){
+      alert("Please enter login ID or name.");
+      $("name").focus();
+      return;
+    }
+    if(questionBank.length < 2){
+      alert("Question bank is too small. Add more questions first.");
+      return;
+    }
+
+    resetQuizState();
+    quizQuestions = buildQuizQuestions();
+    $("qTotal").textContent = String(quizQuestions.length);
+    $("loginCard").classList.add("hidden");
+    $("resultCard").classList.add("hidden");
+    $("quizCard").classList.remove("hidden");
+    quizActive = true;
+    loadQuestion();
+  }
+
+  function loadQuestion(){
+    clearInterval(interval);
+    const q = quizQuestions[index];
+    if(!q){
+      finishQuiz();
+      return;
+    }
+
+    time = QUESTION_TIME;
+    questionStartMs = Date.now();
+    $("timer").textContent = String(time);
+    $("timerFill").style.width = "100%";
+    $("qNumber").textContent = String(index + 1);
+    $("qCategory").textContent = q.cat || "General";
+    $("answeredCount").textContent = String(answeredCount);
+    $("qText").textContent = q.q;
+
+    const labels = ["A", "B", "C", "D"];
+    $("options").innerHTML = q.a.map((opt, i) => `
+      <button class="option-btn" data-index="${i}">
+        <span class="answer-tag">${labels[i] || (i+1) + "."}</span>${escapeHtml(opt)}
+      </button>
+    `).join("");
+
+    [...$("options").querySelectorAll("button")].forEach(btn => {
+      btn.addEventListener("click", () => nextQuestion(Number(btn.dataset.index)));
+    });
+
+    interval = setInterval(() => {
+      time--;
+      $("timer").textContent = String(Math.max(0, time));
+      const pct = Math.max(0, (time / QUESTION_TIME) * 100);
+      $("timerFill").style.width = pct + "%";
+      if(time <= 0){
+        nextQuestion(-1);
+      }
+    }, 1000);
+  }
+
+  function nextQuestion(selectedIndex){
+    if(!quizActive) return;
+    clearInterval(interval);
+
+    const current = quizQuestions[index];
+    const spent = Math.min(QUESTION_TIME, Math.max(0, Math.round((Date.now() - questionStartMs) / 1000)));
+    timings.push(spent);
+
+    if(selectedIndex === current.c) score++;
+    answeredCount++;
+    index++;
+    if(index >= quizQuestions.length){
+      finishQuiz();
+      return;
+    }
+    loadQuestion();
+  }
+
+  async function finishQuiz(forcedReason = ""){
+    clearInterval(interval);
+    quizActive = false;
+
+    $("quizCard").classList.add("hidden");
+    $("resultCard").classList.remove("hidden");
+
+    const total = quizQuestions.length || 1;
+    const percent = Math.round((score / total) * 100);
+    const avgTime = timings.length ? (timings.reduce((a,b)=>a+b,0) / timings.length).toFixed(1) : "0.0";
+    const statusMeta = getResultClass(percent);
+
+    $("scoreRing").className = `score-ring ${statusMeta.ring}`;
+    $("scoreRing").textContent = percent + "%";
+    $("resultBanner").className = `result-banner ${statusMeta.banner}`;
+    $("resultBanner").textContent = forcedReason ? "ENDED" : statusMeta.text;
+    $("scoreText").textContent = `${score} / ${total} correct`;
+    $("resultBreakdown").innerHTML = `
+      <div><strong>Name:</strong> ${escapeHtml($("name").value.trim())}</div>
+      <div><strong>Department:</strong> ${escapeHtml($("dept").value)}</div>
+      <div><strong>Status:</strong> ${forcedReason ? escapeHtml(forcedReason) : statusMeta.text}</div>
+      <div><strong>Average time/question:</strong> ${avgTime}s</div>
+      <div><strong>Completed:</strong> ${new Date().toLocaleString()}</div>
+    `;
+
+    const resultPayload = {
+      name: $("name").value.trim(),
+      department: $("dept").value,
+      score: percent,
+      correct: score,
+      total,
+      avgTime: Number(avgTime),
+      status: forcedReason || statusMeta.text,
+      time: nowIso()
+    };
+
+    await storeResult(resultPayload);
+    sendEmailResult(resultPayload);
+    await sendSlackResult(resultPayload);
+
+    renderLeaderboard();
+    setStats();
+  }
+
+  async function storeResult(payload){
+    try{
+      if(firebaseReady && db){
+        await addDoc(collection(db, "results"), payload);
+      }else{
+        saveLocalResult(payload);
+        resultsCache = getLocalResults();
+      }
+    }catch(err){
+      console.error("storeResult failed, saving local instead", err);
+      saveLocalResult(payload);
+      resultsCache = getLocalResults();
+    }
+  }
+
+  function sendEmailResult(payload){
+    $("email_name").value = payload.name;
+    $("email_department").value = payload.department;
+    $("email_score").value = payload.score + "%";
+    $("email_status").value = payload.status;
+    $("email_correct").value = String(payload.correct);
+    $("email_total").value = String(payload.total);
+    $("email_avg").value = String(payload.avgTime) + "s";
+    $("email_time").value = formatDate(payload.time);
+
+    try{
+      $("emailForm").submit();
+    }catch(err){
+      console.warn("Email submit failed:", err);
+    }
+  }
+
+  async function sendSlackResult(payload){
+    if(!SLACK_WEBHOOK_URL) return;
+    try{
+      await fetch(SLACK_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({
+          text:
+`📊 HOU2 PRO v4.1 Result
+👤 Associate: ${payload.name}
+🏷 Department: ${payload.department}
+📈 Score: ${payload.score}%
+✅ Correct: ${payload.correct}/${payload.total}
+⏱ Avg Time: ${payload.avgTime}s
+🚦 Status: ${payload.status}
+🕒 Completed: ${formatDate(payload.time)}`
+        })
+      });
+    }catch(err){
+      console.warn("Slack send failed:", err);
+    }
+  }
+
+  function forceCheatEnd(){
+    if(!quizActive || cheatTriggered) return;
+    cheatTriggered = true;
+    finishQuiz("Cheating detected");
+  }
+
+  // =========================
+  // ADMIN
+  // =========================
+  function openAdminLogin(){
+    $("adminLoginCard").classList.remove("hidden");
+    $("adminCard").classList.add("hidden");
+  }
+
+  function unlockAdmin(){
+    if($("adminPass").value !== ADMIN_PASSCODE){
+      alert("Incorrect admin passcode.");
+      return;
+    }
+    $("adminLoginCard").classList.add("hidden");
+    $("adminCard").classList.remove("hidden");
+  }
+
+  function hideAdmin(){
+    $("adminCard").classList.add("hidden");
+    $("adminLoginCard").classList.add("hidden");
+  }
+
+  async function addQuestion(){
+    const cat = $("newCat").value.trim() || "General";
+    const q = $("newQuestion").value.trim();
+    const opt1 = $("opt1").value.trim();
+    const opt2 = $("opt2").value.trim();
+    const opt3 = $("opt3").value.trim();
+
+    if(!q || !opt1 || !opt2 || !opt3){
+      alert("Fill question and all 3 options.");
+      return;
+    }
+
+    const payload = {
+      id: "Q" + Math.random().toString(36).slice(2,9).toUpperCase(),
+      cat,
+      q,
+      a:[opt1,opt2,opt3],
+      c:0
+    };
+
+    try{
+      if(firebaseReady && db){
+        await setDoc(doc(db, "questions", payload.id), payload);
+      }
+      questionBank.unshift(payload);
+      saveLocalQuestions(questionBank);
+      renderQuestionList();
+      setStats();
+      $("newCat").value = "";
+      $("newQuestion").value = "";
+      $("opt1").value = "";
+      $("opt2").value = "";
+      $("opt3").value = "";
+      alert("Question added.");
+    }catch(err){
+      console.error(err);
+      alert("Could not add question.");
+    }
+  }
+
+  async function deleteQuestion(id){
+    if(!confirm("Delete this question?")) return;
+    try{
+      if(firebaseReady && db){
+        await deleteDoc(doc(db, "questions", id));
+      }
+    }catch(err){
+      console.warn("Firestore delete issue:", err);
+    }
+    questionBank = questionBank.filter(q => q.id !== id);
+    saveLocalQuestions(questionBank);
+    renderQuestionList();
+    setStats();
+  }
+
+  function seedDefaultBank(){
+    if(!confirm("Reset question bank to default questions?")) return;
+    questionBank = [...defaultQuestions];
+    saveLocalQuestions(questionBank);
+    renderQuestionList();
+    setStats();
+    alert("Default bank restored.");
+  }
+
+  function renderLeaderboard(){
+    const rows = [...resultsCache]
+      .sort((a,b) => (b.score || 0) - (a.score || 0) || new Date(b.time||0) - new Date(a.time||0))
+      .slice(0, 50);
+
+    if(!rows.length){
+      $("leaderboard").innerHTML = `<div class="muted">No results yet.</div>`;
+      return;
+    }
+
+    $("leaderboard").innerHTML = rows.map((r) => {
+      const meta = getResultClass(Number(r.score || 0));
+      return `
+        <div class="leaderboard-row">
+          <div><strong>${escapeHtml(r.name || "-")}</strong><div class="small muted">${escapeHtml(r.department || "")}</div></div>
+          <div>${Number(r.score || 0)}%</div>
+          <div><span class="badge ${meta.badge}">${escapeHtml(r.status || meta.text)}</span></div>
+          <div>${r.avgTime ?? "-"}s</div>
+          <div class="small muted">${escapeHtml(formatDate(r.time))}</div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderQuestionList(){
+    if(!questionBank.length){
+      $("questionList").innerHTML = `<div class="muted">No questions loaded.</div>`;
+      return;
+    }
+    $("questionList").innerHTML = questionBank.map((q) => `
+      <div class="question-row">
+        <div>${escapeHtml(q.q)}</div>
+        <div>${escapeHtml(q.cat || "General")}</div>
+        <div>${escapeHtml(q.a[q.c] || "")}</div>
+        <div>${q.a.length}</div>
+        <div><button class="btn-red small delete-q" data-id="${escapeHtml(q.id)}">Delete</button></div>
+      </div>
+    `).join("");
+
+    [...document.querySelectorAll(".delete-q")].forEach(btn => {
+      btn.addEventListener("click", () => deleteQuestion(btn.dataset.id));
+    });
+  }
+
+  // =========================
+  // EVENTS
+  // =========================
+  $("startBtn").addEventListener("click", startQuiz);
+  $("retryBtn").addEventListener("click", () => {
+    $("resultCard").classList.add("hidden");
+    $("loginCard").classList.remove("hidden");
+  });
+  $("previewAdminBtn").addEventListener("click", openAdminLogin);
+  $("showAdminBtn").addEventListener("click", openAdminLogin);
+  $("adminUnlockBtn").addEventListener("click", unlockAdmin);
+  $("adminCloseBtn").addEventListener("click", hideAdmin);
+  $("adminHideBtn").addEventListener("click", hideAdmin);
+  $("addQuestionBtn").addEventListener("click", addQuestion);
+  $("seedBtn").addEventListener("click", seedDefaultBank);
+
+  document.addEventListener("visibilitychange", () => {
+    if(document.hidden) forceCheatEnd();
+  });
+
+  window.addEventListener("beforeunload", (e) => {
+    if(quizActive){
+      e.preventDefault();
+      e.returnValue = "";
+    }
+  });
+
+  // =========================
+  // STARTUP
+  // =========================
+  questionBank = getLocalQuestions();
+  resultsCache = getLocalResults();
+  renderQuestionList();
+  renderLeaderboard();
+  setStats();
+  setDataModeLabel();
+  initFirebase();
+
+  // expose for quick console testing
+  window.HOU2_PRO = {
+    version: "4.1",
+    startQuiz,
+    seedDefaultBank,
+    get questionBank(){ return questionBank; },
+    get resultsCache(){ return resultsCache; }
+  };
 </script>
-
 </body>
 </html>
